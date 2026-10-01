@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzaria Bella Napoli</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #fff8e7;
+            color: #333;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: #ffd700;
+            padding: 20px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 2em;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span {
+            font-size: 1.5em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        #userNameDisplay {
+            font-size: 1.1em;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: none;
+        }
+
+        .btn-change-name {
+            background-color: #ffd700;
+            color: #b71c1c;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: none;
+        }
+
+        .btn-change-name:hover {
+            background-color: #fff;
+            transform: scale(1.05);
+        }
+
+        /* Modal Nome */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal {
+            background: #fff;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-top: 8px solid #d32f2f;
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal h2 {
+            color: #b71c1c;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+        }
+
+        .modal p {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .modal input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ffd700;
+            border-radius: 10px;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .modal input:focus {
+            border-color: #d32f2f;
+        }
+
+        .modal button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: #ffd700;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal button:hover {
+            background: linear-gradient(135deg, #b71c1c, #8b0000);
+            transform: scale(1.02);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(rgba(183, 28, 28, 0.9), rgba(211, 47, 47, 0.85)),
+                        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%23ffd700" opacity="0.1"/></svg>');
+            background-size: cover;
+            color: #fff;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #ffd700;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.4);
+        }
+
+        .hero p {
+            font-size: 1.3em;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Menu */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .section-title {
+            text-align: center;
+            color: #b71c1c;
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: #ffd700;
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        .pizzas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .pizza-card {
+            background: #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pizza-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(183, 28, 28, 0.25);
+            border-color: #ffd700;
+        }
+
+        .pizza-img {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5em;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            position: relative;
+        }
+
+        .pizza-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: #d32f2f;
+        }
+
+        .pizza-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .pizza-name {
+            color: #b71c1c;
+            font-size: 1.3em;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        .pizza-desc {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        .pizza-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pizza-price {
+            color: #d32f2f;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #ffd700, #ffb300);
+            color: #b71c1c;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 0.95em;
+        }
+
+        .btn-add:hover {
+            background: linear-gradient(135deg, #ffb300, #ff8f00);
+            transform: scale(1.05);
+        }
+
+        .btn-add.added {
+            background: #d32f2f;
+            color: #fff;
+        }
+
+        /* Cart */
+        .cart-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 500;
+        }
+
+        .cart-btn {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: #ffd700;
+            border: 3px solid #ffd700;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            font-size: 1.8em;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(183, 28, 28, 0.5);
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .cart-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ffd700;
+            color: #b71c1c;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.6em;
+            border: 2px solid #fff;
+        }
+
+        .cart-panel {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            width: 380px;
+            max-width: calc(100vw - 40px);
+            max-height: 70vh;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border-top: 6px solid #d32f2f;
+            z-index: 499;
+        }
+
+        .cart-panel.open {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        .cart-header {
+            background: #d32f2f;
+            color: #ffd700;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-header h3 {
+            font-size: 1.2em;
+        }
+
+        .cart-close {
+            background: none;
+            border: none;
+            color: #ffd700;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            padding: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+            max-height: 300px;
+        }
+
+        .cart-empty {
+            text-align: center;
+            color: #999;
+            padding: 30px 15px;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            gap: 10px;
+        }
+
+        .cart-item-info {
+            flex-grow: 1;
+        }
+
+        .cart-item-name {
+            font-weight: bold;
+            color: #b71c1c;
+            font-size: 0.95em;
+        }
+
+        .cart-item-price {
+            color: #666;
+            font-size: 0.85em;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-btn {
+            background: #ffd700;
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            color: #b71c1c;
+            transition: all 0.2s;
+        }
+
+        .qty-btn:hover {
+            background: #ffb300;
+        }
+
+        .qty-display {
+            min-width: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .btn-remove {
+            background: none;
+            border: none;
+            color: #d32f2f;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 0 5px;
+        }
+
+        .cart-footer {
+            padding: 15px 20px;
+            background: #fff8e7;
+            border-top: 2px solid #ffd700;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #b71c1c;
+            margin-bottom: 12px;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-checkout:hover {
+            background: linear-gradient(135deg, #128C7E, #075E54);
+            transform: scale(1.02);
+        }
+
+        .btn-checkout:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #b71c1c, #8b0000);
+            color: #ffd700;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 60px;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        footer .whatsapp-link {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer .whatsapp-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+
+            .logo {
+                font-size: 1.4em;
+            }
+
+            .modal {
+                padding: 30px 20px;
+            }
+
+            .cart-panel {
+                width: calc(100vw - 40px);
+                right: 20px;
+            }
+
+            .section-title {
+                font-size: 1.7em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Modal de Nome -->
+    <div class="modal-overlay" id="nameModal">
+        <div class="modal">
+            <h2>🍕 Bem-vindo à Bella Napoli!</h2>
+            <p>Para começar seu pedido, digite seu nome:</p>
+            <input type="text" id="nameInput" placeholder="Seu nome" maxlength="30" autocomplete="off">
+            <button onclick="saveName()">Começar Pedido</button>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <span>🍕</span> Bella Napoli
+            </div>
+            <div class="user-info">
+                <span id="userNameDisplay"></span>
+                <button class="btn-change-name" id="btnChangeName" onclick="changeName()">Trocar Nome</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <h1>A Melhor Pizza da Cidade!</h1>
+        <p>Ingredientes frescos, massa artesanal e muito sabor. Peça já a sua!</p>
+    </section>
+
+    <!-- Menu -->
+    <div class="container">
+        <h2 class="section-title">Nosso Cardápio</h2>
+        <p class="section-subtitle">Escolha suas pizzas favoritas e adicione ao carrinho</p>
+
+        <div class="pizzas-grid" id="pizzasGrid"></div>
+    </div>
+
+    <!-- Carrinho -->
+    <div class="cart-container">
+        <button class="cart-btn" onclick="toggleCart()">
+            🛒
+            <span class="cart-count" id="cartCount">0</span>
+        </button>
+
+        <div class="cart-panel" id="cartPanel">
+            <div class="cart-header">
+                <h3>🛒 Seu Carrinho</h3>
+                <button class="cart-close" onclick="toggleCart()">✕</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <div class="cart-empty">Seu carrinho está vazio 🍕</div>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">R$ 0,00</span>
+                </div>
+                <button class="btn-checkout" id="btnCheckout" onclick="checkout()" disabled>
+                    📱 Finalizar no WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p><strong>🍕 Bella Napoli Pizzaria</strong></p>
+        <p>📱 WhatsApp: <a href="https://wa.me/5583993912453" class="whatsapp-link" target="_blank">(83) 99391-2453</a></p>
+        <p>© 2024 Bella Napoli - Todos os direitos reservados</p>
+    </footer>
+
+    <script>
+        // Número do WhatsApp
+        const WHATSAPP_NUMBER = '5583993912453';
+
+        // Cardápio de pizzas
+        const pizzas = [
+            { id: 1, nome: 'Margherita', desc: 'Molho de tomate, mussarela, manjericão e orégano', preco: 39.90, emoji: '🍕' },
+            { id: 2, nome: 'Calabresa', desc: 'Molho, mussarela, calabresa fatiada e cebola', preco: 44.90, emoji: '🍕' },
+            { id: 3, nome: 'Portuguesa', desc: 'Molho, mussarela, presunto, ovos, cebola e azeitona', preco: 49.90, emoji: '🍕' },
+            { id: 4, nome: 'Quatro Queijos', desc: 'Mussarela, provolone, parmesão e catupiry', preco: 54.90, emoji: '🧀' },
+            { id: 5, nome: 'Frango com Catupiry', desc: 'Frango desfiado, catupiry e orégano', preco: 49.90, emoji: '🍗' },
+            { id: 6, nome: 'Pepperoni', desc: 'Molho, mussarela e pepperoni picante', preco: 52.90, emoji: '🌶️' },
+            { id: 7, nome: 'Vegetariana', desc: 'Molho, mussarela, tomate, pimentão, cebola e azeitona', preco: 44.90, emoji: '🥬' },
+            { id: 8, nome: 'Doce de Chocolate', desc: 'Chocolate ao leite, morango e granulado', preco: 42.90, emoji: '🍫' }
+        ];
+
+        let cart = [];
+        let userName = '';
+
+        // Salvar nome
+        function saveName() {
+            const input = document.getElementById('nameInput');
+            const name = input.value.trim();
+
+            if (name.length < 2) {
+                input.style.borderColor = '#d32f2f';
+                input.placeholder = 'Digite um nome válido (mín. 2 letras)';
+                return;
+            }
+
+            userName = name;
+            localStorage.setItem('pizzariaUserName', name);
+            document.getElementById('nameModal').style.display = 'none';
+            document.getElementById('userNameDisplay').textContent = `Olá, ${name}! 👋`;
+            document.getElementById('userNameDisplay').style.display = 'inline-block';
+            document.getElementById('btnChangeName').style.display = 'inline-block';
+        }
+
+        // Trocar nome
+        function changeName() {
+            document.getElementById('nameInput').value = userName;
+            document.getElementById('nameModal').style.display = 'flex';
+            document.getElementById('userNameDisplay').style.display = 'none';
+            document.getElementById('btnChangeName').style.display = 'none';
+        }
+
+        // Verificar nome salvo
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedName = localStorage.getItem('pizzariaUserName');
+            if (savedName) {
+                userName = savedName;
+                document.getElementById('nameModal').style.display = 'none';
+                document.getElementById('userNameDisplay').textContent = `Olá, ${savedName}! 👋`;
+                document.getElementById('userNameDisplay').style.display = 'inline-block';
+                document.getElementById('btnChangeName').style.display = 'inline-block';
+            }
+            renderPizzas();
+            renderCart();
+        });
+
+        // Enter no input
+        document.getElementById('nameInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') saveName();
+        });
+
+        // Renderizar pizzas
+        function renderPizzas() {
+            const grid = document.getElementById('pizzasGrid');
+            grid.innerHTML = pizzas.map(pizza => `
+                <div class="pizza-card">
+                    <div class="pizza-img">${pizza.emoji}</div>
+                    <div class="pizza-body">
+                        <div class="pizza-name">${pizza.nome}</div>
+                        <div class="pizza-desc">${pizza.desc}</div>
+                        <div class="pizza-footer">
+                            <span class="pizza-price">R$ ${pizza.preco.toFixed(2).replace('.', ',')}</span>
+                            <button class="btn-add" onclick="addToCart(${pizza.id})">Adicionar</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Adicionar ao carrinho
+        function addToCart(id) {
+            if (!userName) {
+                changeName();
+                return;
+            }
+
+            const pizza = pizzas.find(p => p.id === id);
+            const existing = cart.find(item => item.id === id);
+
+            if (existing) {
+                existing.qtd++;
+            } else {
+                cart.push({ ...pizza, qtd: 1 });
+            }
+
+            renderCart();
+            openCart();
+        }
+
+        // Remover do carrinho
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            renderCart();
+        }
+
+        // Alterar quantidade
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (!item) return;
+
+            item.qtd += delta;
+            if (item.qtd <= 0) {
+                removeFromCart(id);
+            } else {
+                renderCart();
+            }
+        }
+
+        // Renderizar carrinho
+        function renderCart() {
+            const itemsDiv = document.getElementById('cartItems');
+            const totalDiv = document.getElementById('cartTotal');
+            const countDiv = document.getElementById('cartCount');
+            const checkoutBtn = document.getElementById('btnCheckout');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.qtd, 0);
+            const totalValue = cart.reduce((sum, item) => sum + (item.preco * item.qtd), 0);
+
+            countDiv.textContent = totalItems;
+            totalDiv.textContent = `R$ ${totalValue.toFixed(2).replace('.', ',')}`;
+
+            if (cart.length === 0) {
+                itemsDiv.innerHTML = '<div class="cart-empty">Seu carrinho está vazio 🍕</div>';
+                checkoutBtn.disabled = true;
+                return;
+            }
+
+            checkoutBtn.disabled = false;
+            itemsDiv.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.emoji} ${item.nome}</div>
+                        <div class="cart-item-price">R$ ${item.preco.toFixed(2).replace('.', ',')} un.</div>
+                    </div>
+                    <div class="cart-item-controls">
+                        <button class="qty-btn" onclick="changeQty(${item.id}, -1)">−</button>
+                        <span class="qty-display">${item.qtd}</span>
+                        <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                        <button class="btn-remove" onclick="removeFromCart(${item.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Toggle carrinho
+        function toggleCart() {
+            document.getElementById('cartPanel').classList.toggle('open');
+        }
+
+        // Abrir carrinho
+        function openCart() {
+            document.getElementById('cartPanel').classList.add('open');
+        }
+
+        // Checkout - WhatsApp
+        function checkout() {
+            if (cart.length === 0) return;
+            if (!userName) {
+                changeName();
+                return;
+            }
+
+            const totalValue = cart.reduce((sum, item) => sum + (item.preco * item.qtd), 0);
+
+            let message = `🍕 *NOVO PEDIDO - Bella Napoli* 🍕\n\n`;
+            message += `👤 *Cliente:* ${userName}\n\n`;
+            message += `📋 *Itens do Pedido:*\n`;
+            message += `─────────────────────\n`;
+
+            cart.forEach(item => {
+                const subtotal = (item.preco * item.qtd).toFixed(2).replace('.', ',');
+                message += `• ${item.emoji} *${item.nome}*\n`;
+                message += `   ${item.qtd}x R$ ${item.preco.toFixed(2).replace('.', ',')} = R$ ${subtotal}\n\n`;
+            });
+
+            message += `─────────────────────\n`;
+            message += `💰 *TOTAL: R$ ${totalValue.toFixed(2).replace('.', ',')}*\n\n`;
+            message += `✅ Pedido gerado pelo site Bella Napoli`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Fechar carrinho ao clicar fora
+        document.addEventListener('click', (e) => {
+            const panel = document.getElementById('cartPanel');
+            const btn = document.querySelector('.cart-btn');
+            if (panel.classList.contains('open') && 
+                !panel.contains(e.target) && 
+                !btn.contains(e.target)) {
+                panel.classList.remove('open');
+            }
+        });
+    </script>
+
+</body>
+</html>
